@@ -17,8 +17,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')))
 
 
-app.use(planetRouter)
-app.use(launchRouter)
+app.use('/planets', planetRouter)
+app.use('/launches', launchRouter)
 
 // Serving Apps with client side routing it should be in the end
 app.get('/*', (req, res) => {
