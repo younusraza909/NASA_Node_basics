@@ -29,7 +29,20 @@ const addNewLanuch = (launch) => {
     }))
 }
 
+const existLaunchWithId = (id) => {
+    return launches.has(id)
+}
+
+const abortLaunchWithId = (id) => {
+    let aborted = launches.get(id)
+    aborted.success = false
+    aborted.upcoming = false
+    return aborted
+}
+
 module.exports = {
     getAllLaunches,
-    addNewLanuch
+    addNewLanuch,
+    existLaunchWithId,
+    abortLaunchWithId
 }
