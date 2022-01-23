@@ -15,10 +15,21 @@ async function httpGetLaunches() {
     return a.flightNumber - b.flightNumber
   })
 }
-
+// Submit given launch data to launch system.
 async function httpSubmitLaunch(launch) {
-  // TODO: Once API is ready.
-  // Submit given launch data to launch system.
+  try {
+    return await fetch(`${API_URL}/launches`, {
+      method: "POST",
+      body: JSON.stringify(launch),
+      headers: {
+        "Content-Type": 'application/json'
+      }
+    })
+  } catch (e) {
+    return {
+      ok: false
+    }
+  }
 }
 
 async function httpAbortLaunch(id) {
