@@ -15,8 +15,10 @@
   "dependencies": {
     "cors": "^2.8.5",
     "csv-parse": "^5.0.4",
+    "dotenv": "^14.3.2",
     "express": "^4.17.2",
     "jest": "^27.4.7",
+    "mongoose": "^6.1.8",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.15",
     "pm2": "^5.1.2",
