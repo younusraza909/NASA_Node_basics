@@ -2,10 +2,9 @@ const { parse } = require('csv-parse');
 const fs = require('fs');
 const path = require('path')
 
-const planets = require('./planets.mongo')
+const Planets = require('./planets.mongo')
 
 
-const habitablePlanets = [];
 
 function isHabitablePlanet(planet) {
     return planet['koi_disposition'] === 'CONFIRMED'
@@ -20,17 +19,18 @@ function loadPlanetData() {
                 comment: '#',
                 columns: true,
             }))
-            .on('data', (data) => {
+            .on('data', async (data) => {
                 if (isHabitablePlanet(data)) {
-                    habitablePlanets.push(data);
+                    savePlanet(data)
                 }
             })
             .on('error', (err) => {
                 console.log(err);
                 reject(err)
             })
-            .on('end', () => {
-                console.log(habitablePlanets.map((planet) => {
+            .on('end', async () => {
+                let planets = await getAllPlanets()
+                console.log(planets.map((planet) => {
                     return planet['kepler_name'];
                 }));
                 resolve()
@@ -40,8 +40,26 @@ function loadPlanetData() {
 }
 
 
-const getAllPlanets = () => {
-    return habitablePlanets
+const getAllPlanets = async () => {
+    return await Planets.find({}, {
+        "_id": 0, "__v": 0
+    })
+}
+
+async function savePlanet(planet) {
+    try {
+        // Upsert(Update + Insert) Operation so to prevent copying data
+        await Planets.updateOne({
+            kepler_name: planet.kepler_name
+        }, {
+            kepler_name: planet.kepler_name
+        }, {
+            upsert: true
+        })
+    } catch (error) {
+        console.error(`Could not save planet ${error}`)
+    }
+
 }
 
 module.exports = {

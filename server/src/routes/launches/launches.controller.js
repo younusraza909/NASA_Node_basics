@@ -1,10 +1,10 @@
-const { getAllLaunches, addNewLanuch, existLaunchWithId, abortLaunchWithId } = require('../../models/launches.model')
+const { getAllLaunches, scheduleNewLaunch, existLaunchWithId, abortLaunchWithId } = require('../../models/launches.model')
 
-function HttpGetAllLaunches(req, res) {
-    return res.status(200).json(getAllLaunches())
+async function HttpGetAllLaunches(req, res) {
+    return res.status(200).json(await getAllLaunches())
 }
 
-function HttpAddNewLaunch(req, res) {
+async function HttpAddNewLaunch(req, res) {
     launch = req.body
     if (!launch.mission || !launch.rocket || !launch.target || !launch.launchDate) {
         return res.status(400).json({
@@ -19,21 +19,33 @@ function HttpAddNewLaunch(req, res) {
         })
     }
 
-    addNewLanuch(launch)
+    await scheduleNewLaunch(launch)
     return res.status(201).json(launch)
 }
 
-const HttpAbortLaunch = (req, res) => {
+const HttpAbortLaunch = async (req, res) => {
     let launch_id = Number(req.params.id)
 
-    if (!existLaunchWithId(launch_id)) {
+    const existLaunch = await existLaunchWithId(launch_id)
+
+    if (!existLaunch) {
         return res.status(404).json({
             error: "launch not found with this ID"
         })
     }
 
-    const aborted = abortLaunchWithId(launch_id)
-    return res.status(200).json(aborted)
+    const aborted = await abortLaunchWithId(launch_id)
+
+    if (!aborted) {
+        return res.status(400).json({
+            error: "Launch not aborted"
+        })
+    } else {
+
+        return res.status(200).json({
+            ok: true
+        })
+    }
 }
 
 
