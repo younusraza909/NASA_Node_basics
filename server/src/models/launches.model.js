@@ -64,11 +64,7 @@ const scheduleNewLaunch = async (launch) => {
 }
 
 
-const existLaunchWithId = async (id) => {
-    return await Launches.findOne({
-        flightNumber: id
-    })
-}
+
 
 const abortLaunchWithId = async (id) => {
     const aborted = await Launches.updateOne({
@@ -84,12 +80,25 @@ const abortLaunchWithId = async (id) => {
 
 }
 
+
+async function findLaunch(filter) {
+    return await Launches.findOne(filter)
+}
+
+const existLaunchWithId = async (id) => {
+    return await findLaunch({
+        flightNumber: id
+    })
+}
+
 let SPACE_X_URL = 'https://api.spacexdata.com/v4/launches/query'
 
-async function loadLaunchData() {
+
+async function populateLaunches() {
     const response = await axios.post(SPACE_X_URL, {
-        "query": {},
-        "options": {
+        query: {},
+        options: {
+            pagination: false,
             populate: [
                 {
                     path: "rocket",
@@ -128,6 +137,21 @@ async function loadLaunchData() {
         }
 
         console.log(`${launch.flightNumber} ${launch.mission}`);
+    }
+}
+
+async function loadLaunchData() {
+    const firstLaucnh = await findLaunch({
+        flightNumber: 1,
+        rocket: "Falcon 1",
+        mission: "FalconSat"
+    })
+
+    if (findLaunch) {
+        console.log('Launch Data is already loaded!');
+        return;
+    } else {
+        populateLaunches()
     }
 
 }
