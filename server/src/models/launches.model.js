@@ -1,6 +1,6 @@
 const Launches = require('./launches.mongo')
 const Planets = require('./planets.mongo')
-
+const axios = require('axios')
 
 const DEFAULT_FLIGHT_NUMBER = 100
 
@@ -84,7 +84,56 @@ const abortLaunchWithId = async (id) => {
 
 }
 
+let SPACE_X_URL = 'https://api.spacexdata.com/v4/launches/query'
+
+async function loadLaunchData() {
+    const response = await axios.post(SPACE_X_URL, {
+        "query": {},
+        "options": {
+            populate: [
+                {
+                    path: "rocket",
+                    select: {
+                        name: 1
+                    }
+                },
+                {
+                    path: "payloads",
+                    select: {
+                        customers: 1
+                    }
+                }
+            ]
+        },
+
+    })
+
+    const launchDocs = response.data.docs
+
+    for (const launchDoc of launchDocs) {
+        const payloads = launchDoc['payloads']
+        //flattening array into one array
+        const customers = payloads.flatMap((payload) => {
+            return payload['customers ']
+        })
+
+        const launch = {
+            flightNumber: launchDoc['flight_number'],
+            mission: launchDoc['name'],
+            rocket: launchDoc['rocket']['name'],
+            launchDate: launchDoc['date_local'],
+            upcoming: launchDoc['upcoming'],
+            success: launchDoc['success'],
+            customers
+        }
+
+        console.log(`${launch.flightNumber} ${launch.mission}`);
+    }
+
+}
+
 module.exports = {
+    loadLaunchData,
     getAllLaunches,
     scheduleNewLaunch,
     existLaunchWithId,
