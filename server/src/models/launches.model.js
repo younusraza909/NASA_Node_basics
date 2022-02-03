@@ -41,6 +41,7 @@ const getAllLaunches = async (limit, skip) => {
         .find({}, {
             "_id": 0, "__v": 0
         })
+        .sort({ flightNumber: 1 })
         .limit(limit)
         .skip(skip)
 }
