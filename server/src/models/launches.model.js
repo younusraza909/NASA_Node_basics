@@ -36,10 +36,13 @@ const getLatestFlightNumber = async () => {
     return latestLaunch.flightNumber;
 }
 
-const getAllLaunches = async () => {
-    return await Launches.find({}, {
-        "_id": 0, "__v": 0
-    })
+const getAllLaunches = async (limit, skip) => {
+    return await Launches
+        .find({}, {
+            "_id": 0, "__v": 0
+        })
+        .limit(limit)
+        .skip(skip)
 }
 
 const scheduleNewLaunch = async (launch) => {
@@ -127,7 +130,7 @@ async function populateLaunches() {
         const payloads = launchDoc['payloads']
         //flattening array into one array
         const customers = payloads.flatMap((payload) => {
-            return payload['customers ']
+            return payload['customers']
         })
 
         const launch = {
@@ -151,7 +154,7 @@ async function loadLaunchData() {
         mission: "FalconSat"
     })
 
-    if (findLaunch) {
+    if (firstLaucnh) {
         console.log('Launch Data is already loaded!');
         return;
     } else {
