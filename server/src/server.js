@@ -1,3 +1,4 @@
+
 const http = require('http')
 const app = require('./app')
 require('dotenv').config()
@@ -24,3 +25,13 @@ async function startServer() {
 }
 
 startServer()
+
+
+// Command to generate self signed certificate
+// openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365
+
+//4096 is amount of bit for stronger security
+//-nodes so we can use this key without assignnig password as we are in development
+//-keyout will put our key in a file called key.pem (common format for storing key)
+//-out will give a certificate in cert.pem file
+//-days 365 will give a expire date for certificate for a year default(30 days)
