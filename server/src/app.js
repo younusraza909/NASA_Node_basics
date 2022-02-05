@@ -5,8 +5,11 @@ const cors = require('cors')
 const path = require('path')
 const morgan = require('morgan')
 const app = express();
+const helmet = require('helmet')
 
 
+
+app.use(helmet())
 app.use(cors({
     origin: "http://localhost:3000"
 }))

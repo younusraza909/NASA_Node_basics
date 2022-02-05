@@ -10,6 +10,12 @@ const { loadLaunchData } = require('./models/launches.model')
 
 const server = http.createServer(app)
 
+//configuratipn for ssl & tls security 
+// const server = https.createServer({
+// cert:fs.readFileSync(cer.pem),
+// key:fs.readFileSync(key.pem)
+// },app)
+
 const PORT = 8000;
 
 
